@@ -1,0 +1,79 @@
+body,
+html {
+    margin: 0;
+    padding: 0;
+    background-color: black;
+}
+
+#gadsden-snake {
+    position: absolute;
+    height: 39vh;
+    width: 20.83333333333vw;
+    left: 50%;
+    top: 50vh;
+    transform: scale(2.45, 2.45) translateX(-2.0833333vw) translateY(-7.9129vh);
+    opacity: 0.1;
+}
+
+#form-container {
+    width: 100vw;
+    height: 100svh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+#form-container input[type="text"] {
+    font-size: 50px;
+    text-align: center;
+    font-family: 'Libre Caslon Text';
+    text-transform: uppercase;
+    padding: 20px;
+    width: 70vw;
+    border-radius: 30px;
+    background-color: #F4DC00;
+    border: none;
+    outline: none;
+}
+
+#form-container button {
+    background-color: transparent;
+    outline: none;
+    border: none;
+    cursor: pointer;
+    position: relative;
+    right: 110px;
+}
+
+#form-container button #magnifier-svg-icon,
+#form-container button #btc-svg-background {
+    fill: black;
+    transition-property: fill;
+    transition-duration: 0.2s;
+}
+
+#form-container button:hover #magnifier-svg-icon,
+#form-container button:hover #btc-svg-background {
+    fill: #F7931A;
+}
+
+#form-container input[type="text"]:after {
+    content: "gamer";
+}
+
+#form-container input[type="text"]::-webkit-input-placeholder {
+    color: black;
+}
+
+#form-container input[type="text"]:-ms-input-placeholder {
+    color: black;
+}
+
+#form-container input[type="text"]:-moz-placeholder {
+    color: black;
+}
+
+#form-container input[type="text"]::-moz-placeholder {
+    color: black;
+}

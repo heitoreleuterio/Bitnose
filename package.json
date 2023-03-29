@@ -1,0 +1,23 @@
+{
+  "name": "bitnose",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node --inspect index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "browserify": "^17.0.0",
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "json-fn": "^1.1.1",
+    "mongoose": "^7.0.2",
+    "puppeteer": "^19.7.5",
+    "uuid": "^9.0.0"
+  },
+  "type": "module"
+}

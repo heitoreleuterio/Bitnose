@@ -1,0 +1,139 @@
+html,
+body {
+    background-color: black;
+}
+
+.loading {
+    cursor: wait;
+}
+
+@keyframes LoadingSnake {
+    0% {
+        fill: #ffffff;
+    }
+
+    100% {
+        fill: #F4DC00;
+    }
+}
+
+#gadsden-snake {
+    position: absolute;
+    height: 39vh;
+    width: 20.83333333333vw;
+    left: 50%;
+    top: 50vh;
+    transform: scale(1, 1) translateX(-7.0833333vw) translateY(-17.9129vh);
+}
+
+.low-opacity {
+    opacity: 0.1;
+}
+
+.during-animation {
+    animation-name: LoadingSnake;
+    animation-duration: 1s;
+    animation-delay: 1s;
+    animation-iteration-count: infinite;
+    animation-direction: alternate;
+    animation-fill-mode: both;
+}
+
+.item-container {
+    text-align: center;
+    width: 290px;
+    height: 390px;
+    padding: 20px;
+    padding-bottom: 30px;
+    padding-top: 30px;
+    background-color: #F4DC00;
+    border-radius: 10px;
+    box-shadow: 9px 10px 3px #b8a70d;
+    margin: 20px;
+    position: relative;
+}
+
+.item-image {
+    width: 170px;
+    max-height: 190px;
+    border-radius: 20px;
+}
+
+.buy-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: absolute;
+    bottom: 10px;
+    gap: 10px;
+}
+
+.item-title {
+    font-family: 'Libre Caslon Text';
+    font-size: 19px;
+}
+
+#not-find-message {
+    font-family: 'Libre Caslon Text';
+    color: #F4DC00;
+    text-align: center;
+    font-size: 50px;
+    position: relative;
+    top: 50px;
+    display: none;
+}
+
+.item-price {
+    font-family: monospace;
+    margin: 10px;
+    font-size: 21px;
+    text-decoration: underline;
+}
+
+.item-button {
+    font-size: 15px;
+    padding: 15px;
+    padding-left: 30px;
+    padding-right: 30px;
+    border-radius: 10px;
+    background-color: black;
+    color: white;
+    border: none;
+    font-family: "Roboto Mono";
+    cursor: pointer;
+    white-space: pre;
+    text-decoration: none;
+}
+
+.item-button:visited {
+    color: white;
+}
+
+.itens-container {
+    display: grid;
+    justify-content: center;
+    grid-template-columns: auto auto auto auto;
+}
+
+#page-control-container {
+    text-align: center;
+}
+
+.page-control-button {
+    background-color: #F4DC00;
+    border: none;
+    outline: none;
+    border-radius: 10px;
+    padding: 0px;
+    box-sizing: border-box;
+    width: 70px;
+    height: 60px;
+    margin: 0px;
+    cursor: pointer;
+    transition-property: opacity;
+    transition-duration: 0.4s;
+}
+
+.page-control-button:hover {
+    opacity: 0.8;
+}

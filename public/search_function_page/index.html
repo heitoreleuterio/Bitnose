@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="/search_function_page/style.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Libre+Caslon+Text&family=Roboto+Mono&display=swap"
+        rel="stylesheet">
+    <title>Bitnose - Function Maker</title>
+</head>
+
+<body>
+    <a id="actual-store-title"></a>
+    <div id="store-input-container">
+        <input class="store-input" id="store-identifier-input" type="text" placeholder="Store identifier here" >
+        <input type="button" class="store-button-input" id="store-select-input" value="Select Store" onclick="SelecionarFazenda()">
+    </div>
+    <textarea id="code-textarea"></textarea>
+    <input class="store-button-input" id="send-function-input" type="button" value="Send Function"
+        onclick="EnviarNovaFuncao()">
+    <script src="/json-fn.js"></script>
+    <script src="/search_function_page/script.js"></script>
+</body>
+
+</html>

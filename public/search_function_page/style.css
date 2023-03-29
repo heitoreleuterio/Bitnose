@@ -1,0 +1,97 @@
+html,
+body {
+    background-color: black;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+}
+
+#code-textarea {
+    background-color: #F4DC00;
+    border-radius: 5px;
+    width: 99vw;
+    height: 76vh;
+    border: none;
+    outline: none;
+    resize: none;
+    padding: 5px;
+    font-size: 20px;
+}
+
+.store-input {
+    padding: 10px;
+    font-size: 23px;
+    border-radius: 5px;
+    border: none;
+    outline: none;
+    text-align: center;
+    width: 400px;
+    margin: 5px;
+    color: darkred;
+}
+
+.store-button-input {
+    background-color: darkred;
+    padding: 10px;
+    padding-left: 30px;
+    padding-right: 30px;
+    color: white;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    border-radius: 10px;
+    transition-property: opacity;
+    transition-duration: 0.3s;
+    opacity: 1;
+}
+
+
+.store-button-input:hover {
+    opacity: 0.7;
+}
+
+#store-select-input {
+    margin: 7px;
+    font-size: 18px;
+}
+
+#send-function-input {
+    font-size: 30px;
+    width: 400px;
+    padding: 20px;
+    margin-top: 20px;
+}
+
+#store-input-container {
+    display: grid;
+    grid-template-rows: auto auto;
+    justify-items: center;
+}
+
+#actual-store-title {
+    margin: 0;
+    color: #F4DC00;
+    font-family: 'Libre Caslon Text';
+    position: absolute;
+    left: 20px;
+    top: 20px;
+    font-size: 50px;
+    text-decoration: underline;
+    font-weight: bold;
+}
+
+.store-input::-webkit-input-placeholder {
+    color: black;
+}
+
+.store-input:-ms-input-placeholder {
+    color: black;
+}
+
+.store-input:-moz-placeholder {
+    color: black;
+}
+
+.store-input::-moz-placeholder {
+    color: black;
+}
