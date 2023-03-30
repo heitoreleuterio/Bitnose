@@ -9,7 +9,7 @@ dotenv.config();
 
 const app = express();
 
-app.use("/", express.static(path.resolve("./public")));
+app.use("/", express.static(path.resolve("./src/public")));
 
 mongoose.connect(process.env.MONGO_SERVER)
     .then(database => {
