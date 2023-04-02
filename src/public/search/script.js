@@ -1,5 +1,17 @@
-const itensContainer = document.querySelector(".itens-container");
 const gadsdenSnake = document.querySelector("#gadsden-snake");
+
+function gadsdenScaling() {
+    let scaleY = innerHeight * 1 / 1011;
+    gadsdenSnake.style.transform = `scale(${scaleY},${scaleY})`;
+}
+
+window.addEventListener("resize", () => {
+    gadsdenScaling();
+});
+
+gadsdenScaling();
+
+const itensContainer = document.querySelector(".itens-container");
 const notFindMessage = document.querySelector("#not-find-message");
 const pageControlContainer = document.querySelector("#page-control-container");
 

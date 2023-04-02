@@ -6,13 +6,11 @@ html {
 }
 
 #gadsden-snake {
+    height: 98.02vh;
     position: absolute;
-    height: 39vh;
-    width: 20.83333333333vw;
-    left: 50%;
-    top: 50vh;
-    transform: scale(2.45, 2.45) translateX(-2.0833333vw) translateY(-7.9129vh);
+    z-index: 1;
     opacity: 0.1;
+    transform: translateX(5vw);
 }
 
 #form-container {
@@ -24,12 +22,16 @@ html {
     position: relative;
 }
 
+#form-container :not(#gadsden-snake) {
+    z-index: 2;
+}
+
 #form-container input[type="text"] {
-    font-size: 50px;
+    font-size: 5vh;
     text-align: center;
     font-family: 'Libre Caslon Text';
     text-transform: uppercase;
-    padding: 20px;
+    padding: 2vh;
     width: 70vw;
     border-radius: 30px;
     background-color: #F4DC00;
@@ -56,6 +58,10 @@ html {
 #form-container button:hover #magnifier-svg-icon,
 #form-container button:hover #btc-svg-background {
     fill: #F7931A;
+}
+
+#svg-btc {
+    height: clamp(70px, 9.7vh, 9.7vh);
 }
 
 #form-container input[type="text"]:after {

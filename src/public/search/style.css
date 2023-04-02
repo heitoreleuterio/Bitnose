@@ -19,11 +19,13 @@ body {
 
 #gadsden-snake {
     position: absolute;
-    height: 39vh;
-    width: 20.83333333333vw;
-    left: 50%;
-    top: 50vh;
-    transform: scale(1, 1) translateX(-7.0833333vw) translateY(-17.9129vh);
+    margin: auto;
+    height: 390px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    top: 0;
+    width: 385px;
 }
 
 .low-opacity {
@@ -117,6 +119,7 @@ body {
 
 #page-control-container {
     text-align: center;
+    display: none;
 }
 
 .page-control-button {

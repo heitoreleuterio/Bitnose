@@ -2,9 +2,9 @@ import Store from "../models/store.js"
 import mongoose from "mongoose";
 
 export async function AddNewStore(req, res) {
-    const { name, description, url } = req.body;
+    const { name, description, url, countries, categories } = req.body;
     try {
-        const store = new Store({ name, description, url });
+        const store = new Store({ name, description, url, countries, categories });
         await store.save();
         res.status(201).json({
             message: "New store added with success!",

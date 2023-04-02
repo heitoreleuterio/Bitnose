@@ -7,7 +7,9 @@ export const searchSessionSchema = new mongoose.Schema({
     resultsPerPage: { type: [[searchResultSchema]], default: new Array() },
     finished: { type: Boolean, default: false },
     startDate: { type: Date, default: new Date() },
-    StoresSessionState: { type: [storeSessionStateSchema], default: new Array() }
+    StoresSessionState: { type: [storeSessionStateSchema], default: new Array() },
+    acceptedCountries: { type: [String], default: new Array() },
+    acceptedCategories: { type: [String], default: new Array() }
 });
 
 export const SearchSession = mongoose.model("SearchSession", searchSessionSchema);

@@ -6,7 +6,7 @@ let actualStore;
 function EnviarNovaFuncao() {
     if (actualStore != null) {
         let searchFunction;
-        let code = 'searchFunction = async (search_query,search_page) => {' + 'const puppeteer = require("puppeteer");' + textarea.value + '}';
+        let code = 'searchFunction = async (search_query,search_page,puppeteer,countries) => {' + '\'use strict\';' + textarea.value + '}';
         eval(code);
         const searchFunctionStringfy = JSONfn.stringify(searchFunction);
         const fetchHeaders = new Headers();

@@ -3,6 +3,7 @@ import JSONfn from "json-fn"
 import { SearchSession } from "../models/search-session.js";
 import { SearchResult } from "../models/search-result.js";
 import { StoreSessionState } from "../models/store-session-state.js";
+import puppeteer from "puppeteer";
 
 const activeSearchs = [
 
@@ -38,11 +39,12 @@ export async function Search(req, res) {
                 resultsPerPage = resultsPerPage.map(doc => {
                     return { title: doc.title, price: doc.price, currency: doc.currency, imageSrc: doc.imageSrc, url: doc.url };
                 });
-                results = resultsPerPage;
+                results.push(resultsPerPage);
             }
             else
                 results = [];
-            if (results.length < 20) {
+            const resultsTotal = results.map(site => site.length).reduce((a1, a2) => a1 + a2, 0);
+            if (resultsTotal < 20) {
                 const notFinishedStores = searchSession.StoresSessionState.filter(storeSessionState => !storeSessionState.finished);
 
                 if (notFinishedStores.length != 0) {
@@ -53,11 +55,8 @@ export async function Search(req, res) {
                         createStorePromise(promises, res, store, searchSession.search, results, searchSession, storeSessionState._id, resultsLockPromise, storeSessionState.currentPage);
                     }
                 }
-                else
-                    results = [results];
             }
             else {
-                results = [results];
                 res.json({ results });
                 resolve();
                 return;
@@ -65,6 +64,7 @@ export async function Search(req, res) {
         }
         else {
             searchSession = new SearchSession({ search: searchQuery });
+            searchSession.acceptedCountries.push("United States of America");
             for (let store of stores) {
                 const storeSessionState = new StoreSessionState({ storeIdentifier: store._id });
                 searchSession.StoresSessionState.push(storeSessionState);
@@ -75,7 +75,7 @@ export async function Search(req, res) {
         if (!res.headersSent)
             res.json({ results });
 
-        const resultsTotal = results.some(() => true) ? results.map(site => site.length).reduce((a1, a2) => a1 + a2) : 0;
+        const resultsTotal = results.some(() => true) ? results.map(site => site.length).reduce((a1, a2) => a1 + a2, 0) : 0;
         if (resultsTotal != 0 && searchSession.resultsPerPage.length < page)
             searchSession.resultsPerPage.push(transformIntoMongoDBResultsCollection(results));
         await searchSession.save();
@@ -112,7 +112,7 @@ async function awaitStorePageResult(res, store, searchQuery, results, searchSess
             resolve();
         }, 10000);
         try {
-            const storeResult = await parsedSearchFunction(searchQuery, page);
+            const storeResult = await parsedSearchFunction(searchQuery, page, puppeteer, searchSession.acceptedCountries);
             if (!alreadyHandledPromise) {
                 storeSessionState.currentPage++;
                 clearTimeout(timeoutId);
@@ -143,26 +143,32 @@ async function awaitStorePageResult(res, store, searchQuery, results, searchSess
 
 function addStoreResultToResultsAndVerifyClientResult(res, store, searchQuery, results, searchSession, storeSessionState, storeResult, resultsLockPromise, page, nextPagePromise) {
     return new Promise(async (resolve, reject) => {
+        storeResult = getOnlyNewResults(searchSession, [storeResult])[0];
         results.push(storeResult);
-        const resultsTotal = results.map(site => site.length).reduce((a1, a2) => a1 + a2);
-        if (resultsTotal >= 20) {
-            let leftoverItems = [...storeResult].filter((item, index) => index >= 20);
+        let resultsOneArray = [].concat.apply([], results);
+        if (resultsOneArray.length >= 20) {
+            let leftoverItems = [...storeResult].filter((item, index) => resultsOneArray.indexOf(item) >= 20);
             let storeIndex = results.indexOf(storeResult);
-            results[storeIndex] = [...storeResult].filter((item, index) => index < 20);
+            results[storeIndex] = [...storeResult].filter((item, index) => resultsOneArray.indexOf(item) < 20);
             if (!res.headersSent)
                 res.json({ results });
-            searchSession.resultsPerPage.push(transformIntoMongoDBResultsCollection(results));
+
+            addResultsToNewPage(searchSession, results);
             results.length = 0;
             results.push([...leftoverItems]);
-            let resultTotalAtual = results.map(site => site.length).reduce((a1, a2) => a1 + a2);
+            let resultTotalAtual = results.map(site => site.length).reduce((a1, a2) => a1 + a2, 0);
             while (resultTotalAtual >= 20) {
                 const originalLeftOverItems = [...leftoverItems];
                 leftoverItems = [...leftoverItems].filter((item, index) => index >= 20);
                 results[0] = [...originalLeftOverItems].filter((item, index) => index < 20);
-                searchSession.resultsPerPage.push(transformIntoMongoDBResultsCollection(results));
+                addResultsToNewPage(searchSession, results);
                 results.length = 0;
                 results.push([...leftoverItems]);
-                resultTotalAtual = results.map(site => site.length).reduce((a1, a2) => a1 + a2);
+                resultTotalAtual = results.map(site => site.length).reduce((a1, a2) => a1 + a2, 0);
+            }
+            if (resultTotalAtual != 0) {
+                addResultsToNewPage(searchSession, results);
+                results.length = 0;
             }
             resolve();
         }
@@ -175,6 +181,57 @@ function addStoreResultToResultsAndVerifyClientResult(res, store, searchQuery, r
             resolve();
         }
     });
+}
+
+function addResultsToNewPage(searchSession, results) {
+    const resultsToNewPage = getOnlyNewResults(
+        searchSession,
+        putSurplusResultsOnIncompletePageAndReturnResultsToNextPage(searchSession, results)
+    );
+
+    const resultsTotal = resultsToNewPage.map(site => site.length).reduce((a1, a2) => a1 + a2, 0);
+
+    if (resultsTotal != 0)
+        searchSession.resultsPerPage.push(transformIntoMongoDBResultsCollection(resultsToNewPage));
+}
+
+function putSurplusResultsOnIncompletePageAndReturnResultsToNextPage(searchSession, results) {
+    if (searchSession.resultsPerPage.length != 0) {
+        let lastPage = searchSession.resultsPerPage[searchSession.resultsPerPage.length - 1];
+        if (lastPage.length < 20) {
+            let numberOfMissingProducts = 20 - lastPage.length;
+            let resultsToNewPage = getOnlyNewResults(searchSession, results);
+            let resultsOneArray = [].concat.apply([], resultsToNewPage);
+            let missingProducts = resultsOneArray.filter((item, index) => index < resultsOneArray.length && index >= (resultsOneArray.length - numberOfMissingProducts));
+
+            for (let product of missingProducts) {
+                let arrayWithProduct = resultsToNewPage.find(array => array.includes(product));
+                if (arrayWithProduct != null) {
+                    let indexOfProduct = arrayWithProduct.indexOf(product);
+                    arrayWithProduct.splice(indexOfProduct, 1);
+                }
+                lastPage.push(product);
+            }
+            return resultsToNewPage;
+        }
+    }
+    return [...results];
+}
+
+function getOnlyNewResults(searchSession, results) {
+    let resultsNotAddedInPages = results
+        .map(actualResults => actualResults
+            .filter(result => !searchSession.resultsPerPage
+                .some(actualPage => actualPage
+                    .some(perPageResult => perPageResult.url == result.url))));
+    let newResults = [];
+    for (let actualResults of resultsNotAddedInPages) {
+        for (let result of actualResults) {
+            if (!newResults.some(newResult => newResult.url == result.url))
+                newResults.push(result);
+        }
+    }
+    return [newResults];
 }
 
 function transformIntoMongoDBResultsCollection(results) {
