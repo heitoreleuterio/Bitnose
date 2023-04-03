@@ -1,5 +1,6 @@
+import { Types } from "mongoose";
 import Store from "../models/store.js"
-import mongoose from "mongoose";
+import JSONfn from "json-fn"
 
 export async function AddNewStore(req, res) {
     const { name, description, url, countries, categories } = req.body;
@@ -22,7 +23,29 @@ export async function AddNewStore(req, res) {
 }
 
 export async function UpdateStoreSearchFunction(req, res) {
-    const { identifier, searchFunction } = req.body;
+    let { identifier, searchFunction } = req.body;
+    if (!Types.ObjectId.isValid(identifier)) {
+        res.status(400).send("Invalid identifier");
+        return;
+    }
+    if (typeof searchFunction != "string") {
+        res.status(400).send("Search function should be sended as a string, parsed with JSONfn");
+        return;
+    }
+    else {
+        searchFunction = searchFunction
+            .replace("_NuFrRa_async ()", "_NuFrRa_async (search_query,search_page,puppeteer,SearchResult,countries)");
+        searchFunction = searchFunction
+            .replace("{", "{'use strict';");
+        try {
+            JSONfn.parse(searchFunction);
+        }
+        catch (error) {
+            res.status(400).send("Your function isn't valid: " + error);
+            return;
+        }
+    }
+
     try {
         const store = await Store.findById(identifier);
         if (store != null) {

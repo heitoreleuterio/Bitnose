@@ -1,7 +1,8 @@
 import Store from "../models/store.js"
-import JSONfn from "json-fn"
 import { SearchSession } from "../models/search-session.js";
+import { SearchResult } from "../models/search-result.js";
 import { StoreSessionState } from "../models/store-session-state.js";
+import JSONfn from "json-fn"
 import { getOnlyUniqueResults } from "../functions/search-session-functions.js"
 
 import puppeteer from "puppeteer";
@@ -111,11 +112,9 @@ function waitForActiveSearchEnd(searchQuery) {
     });
 }
 
-function getSearchSessionByItsQuery(searchQuery) {
-    return new Promise(async (resolve, reject) => {
-        const sessions = await SearchSession.find({ search: searchQuery });
-        resolve(sessions[0]);
-    });
+async function getSearchSessionByItsQuery(searchQuery) {
+    const sessions = await SearchSession.find({ search: searchQuery });
+    return sessions[0];
 }
 
 function createStorePromise(promises, res, store, results, searchSession, storeSessionStateId, resultsLockPromise, page = 1) {
@@ -125,7 +124,6 @@ function createStorePromise(promises, res, store, results, searchSession, storeS
         await awaitStorePageResult(res, store, results, searchSession, storeSessionState, resultsLockPromise, page);
         resolve();
     }));
-
 }
 
 async function awaitStorePageResult(res, store, results, searchSession, storeSessionState, resultsLockPromise, page) {
@@ -138,7 +136,7 @@ async function awaitStorePageResult(res, store, results, searchSession, storeSes
             resolve();
         }, 10000);
         try {
-            const storeResult = await parsedSearchFunction(searchSession.search, page, puppeteer, searchSession.acceptedCountries);
+            const storeResult = await parsedSearchFunction(searchSession.search, page, puppeteer, SearchResult, searchSession.acceptedCountries);
             if (!alreadyHandledPromise) {
                 storeSessionState.currentPage++;
                 clearTimeout(timeoutId);

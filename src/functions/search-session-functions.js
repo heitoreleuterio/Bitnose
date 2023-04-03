@@ -20,13 +20,7 @@ export function transformResultsIntoMongoDBResultsCollection(results) {
     let mongodbResults = [];
     for (let site of results) {
         for (let result of site) {
-            mongodbResults.push(new SearchResult({
-                imageSrc: result.imageSrc,
-                url: result.url,
-                price: result.price,
-                title: result.title,
-                currency: result.currency
-            }));
+            mongodbResults.push(result);
         }
     }
     return mongodbResults;
