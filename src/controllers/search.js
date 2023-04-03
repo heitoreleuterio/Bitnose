@@ -91,7 +91,7 @@ function deleteTimeoutSessions() {
             const sessions = await SearchSession.find();
             const deletePromises = [];
             for (let session of sessions) {
-                if (Math.abs((new Date() - session.startDate)) > 420000)
+                if (Math.abs((new Date() - session.startDate)) > process.env.SESSION_TIMEOUT_MILLISECONDS)
                     deletePromises.push(SearchSession.findByIdAndDelete(session._id));
             }
             await Promise.all(deletePromises);
