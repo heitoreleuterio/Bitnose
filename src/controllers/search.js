@@ -127,14 +127,15 @@ function createStorePromise(promises, res, store, results, searchSession, storeS
 }
 
 async function awaitStorePageResult(res, store, results, searchSession, storeSessionState, resultsLockPromise, page) {
+    let timeoutId;
+    let alreadyHandledPromise = false;
     return new Promise(async (resolve, reject) => {
         const parsedSearchFunction = JSONfn.parse(store.searchFunction);
-        let alreadyHandledPromise = false;
-        const timeoutId = setTimeout(async () => {
+        timeoutId = setTimeout(() => {
             alreadyHandledPromise = true;
             storeSessionState.finished = true;
             resolve();
-        }, 10000);
+        }, process.env.SITE_TIMEOUT_MILLISECONDS);
         try {
             const storeResult = await parsedSearchFunction(searchSession.search, page, puppeteer, SearchResult, searchSession.acceptedCountries);
             if (!alreadyHandledPromise) {

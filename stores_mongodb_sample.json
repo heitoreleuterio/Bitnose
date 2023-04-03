@@ -1,0 +1,52 @@
+[{
+  "_id": {
+    "$oid": "642aa25e5ff2695ace9df98f"
+  },
+  "name": "Purse",
+  "url": "https://purse.io/",
+  "description": "Buy amazon items with Bitcoin",
+  "searchFunction": "\"_NuFrRa_async (search_query,search_page,puppeteer,SearchResult,countries) => {'use strict';const browser = await puppeteer.launch();\\n        const page = await browser.newPage();\\n        await page.setViewport({\\n            width: 1920,\\n            height: 1080,\\n            isMobile: false\\n        });\\n        let searchWord = search_query;\\n        let actualPage = search_page;\\n        let acceptedCountries = [\\\"japan\\\", \\\"united states of america\\\", \\\"united kingdom\\\", \\\"germany\\\", \\\"canada\\\"];\\n        var abbreviations = {\\n            \\\"japan\\\": \\\"jp\\\",\\n            \\\"united states of america\\\": \\\"us\\\",\\n            \\\"united kingdom\\\": \\\"uk\\\",\\n            \\\"germany\\\": \\\"de\\\",\\n            \\\"canada\\\": \\\"ca\\\"\\n        };\\n        let finalResults = [];\\n        for (let country of countries) {\\n            await page.goto(`https://purse.io/api/v2/items/${abbreviations[country.toLowerCase()]}?keywords=${searchWord}&page=${actualPage}`);\\n            const data = await page.evaluate(() => {\\n                const json = document.body.innerText;\\n                const items = JSON.parse(json).items;\\n                return items.map(item => {\\n                    return {\\n                        title: item.name,\\n                        price: item[\\\"fiat_price\\\"],\\n                        imageSrc: item.images.medium,\\n                        url: `${item.asin}`,\\n                        currency: item[\\\"currency_symbol\\\"]\\n                    };\\n                });\\n            });\\n            for (let item of data) {\\n                item.url = `https://purse.io/product/${abbreviations[country.toLowerCase()].toUpperCase()}/${item.url}`;\\n                item = new SearchResult(item);\\n            }\\n            finalResults.push(data);\\n        };\\n        finalResults = [].concat.apply([], finalResults);\\n        await browser.close();\\n        return finalResults}\"",
+  "countries": [
+    "United States of America",
+    "Japan",
+    "United Kingdom",
+    "Germany",
+    "Canada"
+  ],
+  "categories": [],
+  "review": [],
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "642acfed3b543b35dd858667"
+  },
+  "name": "Lojabit",
+  "url": "https://www.lojabit.com/",
+  "description": "Compre perfumes importados originais",
+  "searchFunction": "\"_NuFrRa_async (search_query,search_page,puppeteer,SearchResult,countries) => {'use strict'; const browser = await puppeteer.launch();\\n        const page = await browser.newPage();\\n        await page.setViewport({ width: 1920, height: 1080, isMobile: false });\\n        let searchWord = search_query;\\n        let actualPage = search_page;\\n        await page.goto(`https://www.lojabit.com/buscar?q=${searchWord}&pagina=${actualPage}`, { waitUntil: 'networkidle0' });\\n        const finalResults = await page.evaluate(() => {\\n            const items = [...document.querySelectorAll(\\\".listagem-item\\\")]\\n                .filter(item => !item.classList.contains(\\\"indisponivel\\\"));\\n            return items.map(item => {\\n                return {\\n                    title: item.querySelector(\\\".nome-produto\\\").textContent,\\n                    price: parseFloat(item\\n                        .querySelector(\\\".preco-promocional\\\")\\n                        .textContent\\n                        .replaceAll(/[.,]/g, (str) => str == '.' ? ',' : '.')\\n                        .replace(\\\"R$\\\", \\\"\\\")),\\n                    imageSrc: item.querySelector(\\\".imagem-principal\\\").src,\\n                    url: item.querySelector(\\\"a\\\").href,\\n                    currency: \\\"R$\\\"\\n                }\\n            });\\n        });\\n        for (let item of finalResults) {\\n            item = new SearchResult(item);\\n        }\\n\\n        await browser.close();\\n        return finalResults;}\"",
+  "countries": [
+    "Brazil"
+  ],
+  "categories": [
+    "Cosmetic",
+    "Perfumes"
+  ],
+  "review": [],
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "642adce976f35bda7b73e3bf"
+  },
+  "name": "Qualidoc",
+  "url": "https://www.qualidoc.com.br/",
+  "description": "Farmacia digital",
+  "searchFunction": "\"_NuFrRa_async (search_query,search_page,puppeteer,SearchResult,countries) => {'use strict';const browser = await puppeteer.launch();\\n        const page = await browser.newPage();\\n        await page.setViewport({ width: 1920, height: 1080, isMobile: false });\\n        let searchWord = search_query;\\n        let actualPage = search_page;\\n        await page.goto(`https://www.qualidoc.com.br/searchresults?&Ntt=${searchWord}&Nty=1&No=0&Nrpp=12&Rdm=969&searchType=simple&type=search&page=${actualPage}`, { waitUntil: 'networkidle0' });\\n        const finalResults = (await page.evaluate(() => {\\n            const productsBoxes = [...document.querySelectorAll(\\\".productBox\\\")];\\n            return productsBoxes.map(productBox => {\\n                if (productBox.querySelector(\\\".outOfStockContainer\\\") == null) {\\n                    const imageSrc = productBox.querySelector(\\\".productImage\\\").src;\\n                    const title = productBox.querySelector(\\\".title\\\").querySelector(\\\"span\\\").title;\\n                    const price = parseFloat(productBox\\n                        .querySelector(\\\".salePrice\\\")\\n                        .querySelector(\\\"strong\\\")\\n                        .innerText\\n                        .replaceAll(/[.,]/g, (str) => str == '.' ? ',' : '.')\\n                        .replace(\\\"R$\\\", \\\"\\\"));\\n                    const url = productBox.querySelector(\\\".infoContainer\\\").querySelector(\\\"a\\\").href;\\n                    return { title, price, imageSrc, url, currency: \\\"R$\\\" };\\n                }\\n            });\\n        })).filter(value => value != null);\\n\\n        for (let item of finalResults) {\\n            item = new SearchResult(item);\\n        }\\n        await browser.close();\\n        return finalResults;}\"",
+  "countries": [
+    "Brazil"
+  ],
+  "categories": [
+    "Pharmacy"
+  ],
+  "review": [],
+  "__v": 0
+}]
