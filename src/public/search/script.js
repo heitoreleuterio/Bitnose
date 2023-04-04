@@ -31,6 +31,7 @@ function LoadItens(data) {
             const itemImage = document.createElement("img");
             itemImage.className = "item-image";
             itemImage.src = item.imageSrc;
+            itemImage.setAttribute("referrerpolicy", "no-referrer");
             itemContainer.appendChild(itemImage);
             const itemTitle = document.createElement("h3");
             itemTitle.className = "item-title";
@@ -65,18 +66,32 @@ function LoadItens(data) {
 function GetItensFromServer() {
     pageControlContainer.style.display = "none";
     document.querySelector("html").className = "loading";
-    const params = new Proxy(new URLSearchParams(window.location.search), {
-        get: (searchParams, prop) => searchParams.get(prop)
-    });
+    const params = new URLSearchParams(window.location.search);
 
-    let searchQuery = params["search_query"];
-    let page = params["page"];
+    let searchQuery = params.get("search_query");
+    let page = params.get("page");
 
-    fetch("http://localhost:6013/search/content?" + new URLSearchParams({
+    let baseURL = `${window.location.protocol}//${window.location.host}/search`;
+
+    fetch(`${baseURL}/content?` + new URLSearchParams({
         search_query: searchQuery,
         page
     }))
-        .then(res => res.json())
+        .then(res => {
+            if (res.redirected) {
+                console.log(res.url.substring(res.url.indexOf("?")))
+                const newParams = new URLSearchParams(res.url.substring(res.url.indexOf("?")));
+
+                let newSearchQuery = newParams.get("search_query");
+                let newPage = newParams.get("page");
+                let newURL = `${baseURL}?` + new URLSearchParams({
+                    search_query: newSearchQuery,
+                    page: newPage
+                });
+                window.history.pushState({ path: newURL }, '', newURL);
+            }
+            return res.json();
+        })
         .then(data => {
             LoadItens(data);
             gadsdenSnake.setAttribute("class", "low-opacity");

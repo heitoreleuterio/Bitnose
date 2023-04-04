@@ -11,7 +11,7 @@ const activeSearchs = [
 
 ];
 
-export async function Search(req, res) {
+export async function Search(req, res, next) {
     let { search_query: searchQuery, page } = req.query;
 
     await deleteTimeoutSessions();
@@ -31,6 +31,12 @@ export async function Search(req, res) {
     let searchSession = await getSearchSessionByItsQuery(searchQuery);
     let mainSearchPromise = new Promise(async (resolve, reject) => {
         if (searchSession != null) {
+            if (page > searchSession.resultsPerPage.length + 1) {
+                res.redirect(`./content?search_query=${searchQuery}&page=${searchSession.resultsPerPage.length}`);
+                next();
+                resolve();
+                return;
+            }
             results.push(searchSession.getPageResults(page));
 
             const resultsTotal = results
@@ -56,6 +62,12 @@ export async function Search(req, res) {
             }
         }
         else {
+            if (page != 1) {
+                res.redirect(`./content?search_query=${searchQuery}&page=1`);
+                next();
+                resolve();
+                return;
+            }
             searchSession = new SearchSession({ search: searchQuery });
             searchSession.acceptedCountries.push("United States of America");
             for (let store of stores) {
@@ -198,8 +210,11 @@ function addStoreResultToResultsAndVerifyClientResult(res, store, results, searc
             resolve();
         }
         else if (storeResult.length != 0) {
+            if (!res.headersSent)
+                nextPagePromise.promise = awaitStorePageResult(res, store, results, searchSession, storeSessionState, resultsLockPromise, page + 1);
+            else
+                searchSession.addResultsToNewPage(results);
             resolve();
-            nextPagePromise.promise = awaitStorePageResult(res, store, results, searchSession, storeSessionState, resultsLockPromise, page + 1);
         }
         else {
             storeSessionState.finished = true;

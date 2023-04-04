@@ -163,7 +163,7 @@ The addition of a new store to the **Bitnose** need to be requested and will be 
   
   ### Environment Variables
   
-  **Bitnose** uses 3 environment variables: 
+  **Bitnose** uses 4 environment variables: 
   > PORT=6013 <br />
   > SITE_TIMEOUT_MILLISECONDS=50000 <br />
   > SESSION_TIMEOUT_MILLISECONDS=420000 <br />
