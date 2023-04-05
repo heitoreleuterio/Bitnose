@@ -13,11 +13,17 @@ gadsdenScaling();
 
 const itensContainer = document.querySelector(".itens-container");
 const notFindMessage = document.querySelector("#not-find-message");
+const bitnoseTitle = document.querySelector(".bitnose-title");
+const pageTitle = document.querySelector("#current-page-title");
+const currentSearchTitle = document.querySelector("#current-search-title");
 const pageControlContainer = document.querySelector("#page-control-container");
 
 function LoadItens(data) {
     itensContainer.innerHTML = "";
     notFindMessage.style.display = "none";
+    bitnoseTitle.style.display = "none";
+    pageTitle.style.display = "none";
+    currentSearchTitle.style.display = "none";
     const results = data.results.filter(site => site instanceof Array);
     const resultsTotal = results.some(() => true) ? results.map(site => site.length).reduce((a1, a2) => a1 + a2) : 0;
     if (resultsTotal == 0) {
@@ -37,9 +43,9 @@ function LoadItens(data) {
             itemTitle.className = "item-title";
             let titleText =
                 [...item.title]
-                    .filter((char, index) => index <= 140)
+                    .filter((char, index) => index <= 175)
                     .reduce((str1, str2) => str1 + str2)
-                + (item.title.length > 140 ? "..." : "");
+                + (item.title.length > 175 ? "..." : "");
             itemTitle.innerHTML = titleText;
             itemContainer.appendChild(itemTitle);
             const buyContainer = document.createElement("div");
@@ -59,7 +65,17 @@ function LoadItens(data) {
         }
     }
 
+    let params = new URLSearchParams(window.location.search);
+
+    let currentPage = params.get("page") ?? '1';
+
+    pageTitle.querySelector("b").innerHTML = currentPage;
+    currentSearchTitle.querySelector("b").innerHTML = params.get("search_query");
+
     pageControlContainer.style.display = "block";
+    bitnoseTitle.style.display = "block";
+    pageTitle.style.display = "block";
+    currentSearchTitle.style.display = "block";
 
 }
 

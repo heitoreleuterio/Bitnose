@@ -7,7 +7,7 @@ export const searchSessionSchema = new mongoose.Schema({
     search: { type: String, required: true },
     resultsPerPage: { type: [[searchResultSchema]], default: new Array() },
     finished: { type: Boolean, default: false },
-    startDate: { type: Date, default: new Date() },
+    startDate: { type: Date, required: true },
     StoresSessionState: { type: [storeSessionStateSchema], default: new Array() },
     acceptedCountries: { type: [String], default: new Array() },
     acceptedCategories: { type: [String], default: new Array() }

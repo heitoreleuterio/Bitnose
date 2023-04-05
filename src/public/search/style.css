@@ -3,6 +3,17 @@ body {
     background-color: black;
 }
 
+body::-webkit-scrollbar {
+    background-color: black;
+    width: clamp(15px, 1.2vw, 30px);
+}
+
+body::-webkit-scrollbar-thumb {
+    background-color: #F4DC00;
+    border-radius: 10px;
+    border: 5px solid black;
+}
+
 .loading {
     cursor: wait;
 }
@@ -21,7 +32,7 @@ body {
     position: absolute;
     margin: auto;
     height: 390px;
-    left: 0;
+    left: 100px;
     right: 0;
     bottom: 0;
     top: 0;
@@ -43,36 +54,55 @@ body {
 
 .item-container {
     text-align: center;
-    width: 290px;
-    height: 390px;
-    padding: 20px;
-    padding-bottom: 30px;
-    padding-top: 30px;
+    width: clamp(250px, 20%, 300px);
+    height: clamp(330px, 46vh, 700px);
+    padding: 12px;
+    padding-left: 5px;
+    padding-right: 5px;
     background-color: #F4DC00;
     border-radius: 10px;
-    box-shadow: 9px 10px 3px #b8a70d;
-    margin: 20px;
     position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    flex-wrap: wrap;
 }
 
 .item-image {
-    width: 170px;
-    max-height: 190px;
+    max-width: 100%;
+    max-height: 35%;
     border-radius: 20px;
+    align-self: flex-start;
 }
 
 .buy-container {
     display: flex;
-    justify-content: space-between;
+    justify-content: space-evenly;
     align-items: center;
-    position: absolute;
-    bottom: 10px;
     gap: 10px;
+    align-self: flex-end;
+    background-color: #000000;
+    padding-left: 8px;
+    padding-right: 8px;
+    border-radius: 20px;
+    width: 90%;
 }
 
 .item-title {
-    font-family: 'Libre Caslon Text';
-    font-size: 19px;
+    font-family: "Roboto Mono";
+    font-weight: 400;
+    font-size: clamp(13px, 1.7vh, 25px);
+    align-self: flex-start;
+    width: 100%;
+    word-wrap: break-word;
+    max-height: clamp(100px, 41%, 400px);
+    overflow: hidden;
+}
+
+.item-title::selection {
+    background-color: transparent;
+    text-decoration: underline;
+    background-color: rgba(0, 255, 0, 0.329);
 }
 
 #not-find-message {
@@ -86,35 +116,55 @@ body {
 }
 
 .item-price {
-    font-family: monospace;
-    margin: 10px;
-    font-size: 21px;
+    font-family: "Roboto Mono";
+    font-size: clamp(16px, 2vh, 33px);
     text-decoration: underline;
+    color: white;
 }
 
 .item-button {
-    font-size: 15px;
-    padding: 15px;
-    padding-left: 30px;
-    padding-right: 30px;
+    font-size: clamp(14px, 1.8vh, 28px);
+    padding: clamp(10px, 5.5%, 18px);
+    padding-left: clamp(15px, 10%, 60px);
+    padding-right: clamp(15px, 10%, 60px);
     border-radius: 10px;
-    background-color: black;
-    color: white;
-    border: none;
+    background-color: white;
+    color: black;
     font-family: "Roboto Mono";
+    font-weight: 800;
     cursor: pointer;
     white-space: pre;
     text-decoration: none;
+    transition-property: background-color, color, outline-color;
+    outline-width: 2px;
+    outline-style: solid;
+    outline-color: black;
+    transition-duration: 0.3s;
 }
 
-.item-button:visited {
+.item-button:hover {
+    background-color: black;
+    outline-color: white;
     color: white;
 }
 
+.item-button:hover:visited {
+    color: white;
+}
+
+.item-button:visited {
+    color: black;
+}
+
 .itens-container {
-    display: grid;
+    display: flex;
     justify-content: center;
-    grid-template-columns: auto auto auto auto;
+    flex-wrap: wrap;
+    gap: 20px;
+    width: clamp(600px, 80%, 4000px);
+    margin: auto;
+    margin-bottom: 30px;
+
 }
 
 #page-control-container {
@@ -139,4 +189,23 @@ body {
 
 .page-control-button:hover {
     opacity: 0.8;
+}
+
+#current-page-title,
+#current-search-title {
+    color: white;
+    position: absolute;
+    top: 4vh;
+    font-size: clamp(20px, 3vh, 40px);
+    margin: 0;
+    font-family: "Roboto Mono";
+    display: none;
+}
+
+#current-page-title {
+    right: 2vw;
+}
+
+#current-search-title {
+    left: 2vw;
 }

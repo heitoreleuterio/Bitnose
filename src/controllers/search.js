@@ -29,6 +29,11 @@ export async function Search(req, res, next) {
     let results = [];
     let promises = [];
     let searchSession = await getSearchSessionByItsQuery(searchQuery);
+    const activeSearchObject = {
+        search_query: searchQuery,
+        promise: null,
+        id: null
+    };
     let mainSearchPromise = new Promise(async (resolve, reject) => {
         if (searchSession != null) {
             if (page > searchSession.resultsPerPage.length + 1) {
@@ -68,7 +73,7 @@ export async function Search(req, res, next) {
                 resolve();
                 return;
             }
-            searchSession = new SearchSession({ search: searchQuery });
+            searchSession = new SearchSession({ search: searchQuery, startDate: new Date() });
             searchSession.acceptedCountries.push("United States of America");
             for (let store of stores) {
                 const storeSessionState = new StoreSessionState({ storeIdentifier: store._id });
@@ -76,6 +81,7 @@ export async function Search(req, res, next) {
                 createStorePromise(promises, res, store, results, searchSession, storeSessionState._id, resultsLockPromise);
             }
         }
+        activeSearchObject.id = searchSession._id;
         await Promise.all(promises);
         if (!res.headersSent)
             res.json({ results });
@@ -89,10 +95,8 @@ export async function Search(req, res, next) {
         resolve();
     });
     let activeSearchIndex = activeSearchs.length;
-    activeSearchs.push({
-        search_query: searchQuery,
-        promise: mainSearchPromise
-    });
+    activeSearchObject.promise = mainSearchPromise;
+    activeSearchs.push(activeSearchObject);
     await mainSearchPromise;
     activeSearchs.splice(activeSearchIndex, 1);
 }
@@ -103,7 +107,9 @@ function deleteTimeoutSessions() {
             const sessions = await SearchSession.find();
             const deletePromises = [];
             for (let session of sessions) {
-                if (Math.abs((new Date() - session.startDate)) > process.env.SESSION_TIMEOUT_MILLISECONDS)
+                if (activeSearchs.some(active => active.id != null && active.id.equals(session._id)))
+                    continue;
+                if (Math.abs(new Date().getTime() - session.startDate.getTime()) > process.env.SESSION_TIMEOUT_MILLISECONDS)
                     deletePromises.push(SearchSession.findByIdAndDelete(session._id));
             }
             await Promise.all(deletePromises);
