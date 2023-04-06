@@ -86,12 +86,14 @@ function GetItensFromServer() {
 
     let searchQuery = params.get("search_query");
     let page = params.get("page");
+    let countries = params.getAll("countries");
 
     let baseURL = `${window.location.protocol}//${window.location.host}/search`;
 
     fetch(`${baseURL}/content?` + new URLSearchParams({
         search_query: searchQuery,
-        page
+        page,
+        countries
     }))
         .then(res => {
             if (res.redirected) {
@@ -100,9 +102,11 @@ function GetItensFromServer() {
 
                 let newSearchQuery = newParams.get("search_query");
                 let newPage = newParams.get("page");
+                let newCountries = newParams.getAll("countries");
                 let newURL = `${baseURL}?` + new URLSearchParams({
                     search_query: newSearchQuery,
-                    page: newPage
+                    page: newPage,
+                    countries: newCountries
                 });
                 window.history.pushState({ path: newURL }, '', newURL);
             }
@@ -123,6 +127,7 @@ function GoToNextPage() {
     let currentPage = Number(searchParams.get("page"));
     currentPage = currentPage == 0 ? 1 : currentPage;
     searchParams.set("page", currentPage + 1);
+    console.log(searchParams.toString());
     window.location.search = searchParams.toString();
 }
 

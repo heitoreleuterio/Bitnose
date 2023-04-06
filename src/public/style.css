@@ -5,6 +5,31 @@ html {
     background-color: black;
 }
 
+body {
+    scroll-behavior: smooth;
+}
+
+body::-webkit-scrollbar-button {
+    background-color: transparent;
+}
+
+body::-webkit-scrollbar-thumb {
+    background-color: black;
+}
+
+body::-webkit-scrollbar {
+    background-color: black;
+    width: clamp(15px, 1.2vw, 30px);
+}
+
+body[scrollable=""]::-webkit-scrollbar-thumb {
+    background-color: #F4DC00;
+    border-radius: 10px;
+    border: 5px solid black;
+}
+
+
+
 #gadsden-snake {
     height: 98.02vh;
     position: absolute;
@@ -14,7 +39,7 @@ html {
 }
 
 #form-container {
-    width: 100vw;
+    width: 100%;
     height: 100svh;
     display: flex;
     justify-content: center;
@@ -26,7 +51,7 @@ html {
     z-index: 2;
 }
 
-#form-container input[type="text"] {
+#form-container #main-input {
     font-size: 5vh;
     text-align: center;
     font-family: 'Libre Caslon Text';
@@ -64,22 +89,166 @@ html {
     height: clamp(70px, 9.7vh, 9.7vh);
 }
 
-#form-container input[type="text"]:after {
+#form-container #main-input:after {
     content: "gamer";
 }
 
-#form-container input[type="text"]::-webkit-input-placeholder {
+#form-container #main-input::-webkit-input-placeholder {
     color: black;
 }
 
-#form-container input[type="text"]:-ms-input-placeholder {
+#form-container #main-input:-ms-input-placeholder {
     color: black;
 }
 
-#form-container input[type="text"]:-moz-placeholder {
+#form-container #main-input:-moz-placeholder {
     color: black;
 }
 
-#form-container input[type="text"]::-moz-placeholder {
+#form-container #main-input::-moz-placeholder {
     color: black;
+}
+
+@keyframes ScrollAlertAnimation {
+    from {
+        bottom: 0px;
+        opacity: 1;
+    }
+
+    to {
+        bottom: 20px;
+    }
+}
+
+#scroll-alert-arrow {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    margin: auto;
+    opacity: 0;
+}
+
+#scroll-alert-arrow[alert=""] {
+    animation-name: ScrollAlertAnimation;
+    animation-delay: 0.3s;
+    animation-duration: 0.3s;
+    animation-iteration-count: infinite;
+    animation-direction: alternate;
+}
+
+.filtering-forms {
+    position: absolute;
+    top: 100vh;
+    background-color: #F4DC00;
+    width: 100%;
+    padding-top: 40px;
+    padding-bottom: 40px;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.filtering-container {
+    border-radius: 10px;
+    background-color: black;
+    color: white;
+    padding: 20px;
+    border: none;
+    position: relative;
+    text-align: center;
+}
+
+
+.selected-countries-container,
+.countries-container {
+    width: 49%;
+    height: 30vh;
+    overflow: auto;
+    display: grid;
+    grid-template-columns: auto auto auto auto;
+    font-family: "Roboto Mono";
+    user-select: none;
+    text-align: left;
+    align-content: flex-start;
+    gap: 10px;
+    row-gap: 20px;
+    overflow: auto;
+    font-size: clamp(15px, 1vw, 40px);
+}
+
+@media screen and (max-width:1296px) {
+
+    .selected-countries-container,
+    .countries-container {
+        grid-template-columns: auto auto auto;
+    }
+}
+
+@media screen and (max-width:900px) {
+
+    .selected-countries-container,
+    .countries-container {
+        grid-template-columns: auto auto;
+    }
+}
+
+
+.selected-countries-container::-webkit-scrollbar,
+.countries-container::-webkit-scrollbar {
+    background-color: transparent;
+    width: 11px;
+    outline: 2px solid #F4DC00;
+    border: 2px solid black;
+    border-radius: 10px;
+}
+
+.selected-countries-container::-webkit-scrollbar-thumb,
+.countries-container::-webkit-scrollbar-thumb {
+    background-color: #F4DC00;
+    border-radius: 10px;
+    border: 2px solid black;
+}
+
+.countries-container {
+    float: left;
+}
+
+.selected-countries-container {
+    float: right;
+}
+
+.general-countries-container {
+    width: 90%;
+}
+
+.country-filter-input {
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 20px;
+    padding: 8px;
+    padding-left: 10px;
+    padding-right: 10px;
+    border-radius: 6px;
+    border: 2px solid #F4DC00;
+    outline: none;
+    background-color: transparent;
+    text-transform: uppercase;
+    color: #F4DC00;
+}
+
+.country-filter-input::-webkit-input-placeholder {
+    color: #f4dc00a1;
+}
+
+.country-filter-input:-ms-input-placeholder {
+    color: #f4dc00a1;
+}
+
+.country-filter-input:-moz-placeholder {
+    color: #f4dc00a1;
+}
+
+.country-filter-input::-moz-placeholder {
+    color: #f4dc00a1;
 }

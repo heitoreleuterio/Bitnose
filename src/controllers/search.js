@@ -1,36 +1,46 @@
-import Store from "../models/store.js"
+import Store from "../models/store.js";
 import { SearchSession } from "../models/search-session.js";
 import { SearchResult } from "../models/search-result.js";
 import { StoreSessionState } from "../models/store-session-state.js";
-import JSONfn from "json-fn"
-import { getOnlyUniqueResults } from "../functions/search-session-functions.js"
-
+import JSONfn from "json-fn";
+import { getOnlyUniqueResults } from "../functions/search-session-functions.js";
 import puppeteer from "puppeteer";
+import countriesJson from "../public/countries.json" assert {type: "json"};
 
 const activeSearchs = [
 
 ];
 
 export async function Search(req, res, next) {
-    let { search_query: searchQuery, page } = req.query;
+    let { search_query: searchQuery, page, countries } = req.query;
+    if (countries != null && (countries.trim() ?? "") != "")
+        countries = countries.split(",");
+    else
+        countries = countriesJson.map(country => country.iso3);
 
     await deleteTimeoutSessions();
-    await waitForActiveSearchEnd(searchQuery);
+    await waitForActiveSearchEnd(searchQuery, countries);
 
     if (page != 'null' && page != null)
         page = Number(page);
     else
         page = 1;
 
-    const stores = await Store.find();
+    const stores = await Store.find({
+        countries: {
+            $in: countries
+        }
+    });
+
     let resultsLockPromise = {
         promise: null
     };
     let results = [];
     let promises = [];
-    let searchSession = await getSearchSessionByItsQuery(searchQuery);
+    let searchSession = await getSearchSessionByItsQueryAndCountries(searchQuery, countries);
     const activeSearchObject = {
         search_query: searchQuery,
+        countries,
         promise: null,
         id: null
     };
@@ -74,7 +84,7 @@ export async function Search(req, res, next) {
                 return;
             }
             searchSession = new SearchSession({ search: searchQuery, startDate: new Date() });
-            searchSession.acceptedCountries.push("United States of America");
+            searchSession.acceptedCountries = countries;
             for (let store of stores) {
                 const storeSessionState = new StoreSessionState({ storeIdentifier: store._id });
                 searchSession.StoresSessionState.push(storeSessionState);
@@ -121,17 +131,17 @@ function deleteTimeoutSessions() {
     });
 }
 
-function waitForActiveSearchEnd(searchQuery) {
+function waitForActiveSearchEnd(searchQuery, countries) {
     return new Promise(async (resolve, reject) => {
-        let currentActiveSearch = activeSearchs.filter(activeSearch => activeSearch.search_query == searchQuery)[0];
+        let currentActiveSearch = activeSearchs.filter(activeSearch => activeSearch.search_query == searchQuery && activeSearch.countries.every((country, index) => country == countries[index]))[0];
         if (currentActiveSearch != null)
             await currentActiveSearch.promise;
         resolve();
     });
 }
 
-async function getSearchSessionByItsQuery(searchQuery) {
-    const sessions = await SearchSession.find({ search: searchQuery });
+async function getSearchSessionByItsQueryAndCountries(searchQuery, countries) {
+    const sessions = await SearchSession.find({ search: searchQuery, acceptedCountries: { $all: countries } });
     return sessions[0];
 }
 
