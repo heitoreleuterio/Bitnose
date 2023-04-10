@@ -53,7 +53,9 @@ function LoadItens(data) {
             itemContainer.appendChild(buyContainer);
             const itemPrice = document.createElement("h4");
             itemPrice.className = "item-price";
-            itemPrice.innerHTML = item.currency + item.price.toLocaleString("pt-BR");
+            itemPrice.innerHTML = item.price != null
+                ? item.currency + item.price.toLocaleString("pt-BR")
+                : "See Website for Price";
             buyContainer.appendChild(itemPrice);
             const itemButton = document.createElement("a");
             itemButton.className = "item-button";
@@ -95,22 +97,28 @@ function GetItensFromServer() {
         page,
         countries
     }))
-        .then(res => {
-            if (res.redirected) {
-                console.log(res.url.substring(res.url.indexOf("?")))
-                const newParams = new URLSearchParams(res.url.substring(res.url.indexOf("?")));
+        .then(async res => {
+            if (res.status == 200) {
+                if (res.redirected) {
+                    console.log(res.url.substring(res.url.indexOf("?")))
+                    const newParams = new URLSearchParams(res.url.substring(res.url.indexOf("?")));
 
-                let newSearchQuery = newParams.get("search_query");
-                let newPage = newParams.get("page");
-                let newCountries = newParams.getAll("countries");
-                let newURL = `${baseURL}?` + new URLSearchParams({
-                    search_query: newSearchQuery,
-                    page: newPage,
-                    countries: newCountries
-                });
-                window.history.pushState({ path: newURL }, '', newURL);
+                    let newSearchQuery = newParams.get("search_query");
+                    let newPage = newParams.get("page");
+                    let newCountries = newParams.getAll("countries");
+                    let newURL = `${baseURL}?` + new URLSearchParams({
+                        search_query: newSearchQuery,
+                        page: newPage,
+                        countries: newCountries
+                    });
+                    window.history.pushState({ path: newURL }, '', newURL);
+                }
+                return res.json();
             }
-            return res.json();
+            throw await res.text();
+        })
+        .catch(error => {
+            alert(error);
         })
         .then(data => {
             LoadItens(data);

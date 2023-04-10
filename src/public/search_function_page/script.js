@@ -21,9 +21,9 @@ function EnviarNovaFuncao() {
             body: JSON.stringify(fetchBody)
         };
 
-        fetch("http://localhost:6013/store/update/search/function", fetchOptions)
-            .then((res) => {
-                console.log(res);
+        fetch("/store/update/search/function", fetchOptions)
+            .then(async (res) => {
+                console.log(await res.text());
             })
             .catch((err) => {
                 console.log(err);
@@ -35,7 +35,7 @@ function SelecionarFazenda() {
     actualStoreTitle.innerHTML = "";
     actualStore = null;
     let identifier = storeIdentifierInput.value;
-    fetch("http://localhost:6013/store/" + identifier)
+    fetch("/store/" + identifier)
         .then(async res => {
             const obj = await res.json();
             if (res.status == "200") {

@@ -1,20 +1,38 @@
 import { Types } from "mongoose";
 import Store from "../models/store.js"
+import { Request, RequestTypes } from "../models/request.js";
 import JSONfn from "json-fn"
+import { getUserFromToken } from "../functions/auth-functions.js";
 
 export async function AddNewStore(req, res) {
     const { name, description, url, countries, categories } = req.body;
     try {
+        const user = await getUserFromToken(req);
         const store = new Store({ name, description, url, countries, categories });
-        await store.save();
-        res.status(201).json({
-            message: "New store added with success!",
-            storeIdentifier: store.identifier
-        });
+        if (user.isAdministrator) {
+            await store.save();
+            res.status(201).json({
+                message: "New store added with success!",
+                storeIdentifier: store.identifier
+            });
+        }
+        else {
+            await store.validate();
+            const request = new Request({
+                content: { name, description, url, countries, categories },
+                type: RequestTypes.NewStore,
+                user: user._id
+            });
+            await request.save();
+            res.status(200).send("Request sended");
+        }
     }
     catch (error) {
         if (error.name == "ValidationError")
-            res.status(400).send(error);
+            res.status(400).send(error.message);
+        else if (error.code != null) {
+            res.status(error.code).send(error.msg);
+        }
         else {
             console.log(error);
             res.status(500).send("Ocorreu um erro interno no servidor, tente novamente mais tarde");
@@ -47,15 +65,27 @@ export async function UpdateStoreSearchFunction(req, res) {
     }
 
     try {
+        const user = await getUserFromToken(req);
         const store = await Store.findById(identifier);
         if (store != null) {
-            store.searchFunction = searchFunction;
-            await store.save();
-            res.status(200).send("Search function updated with success!");
+            if (user.isAdministrator) {
+                store.searchFunction = searchFunction;
+                await store.save();
+                res.status(200).send("Search function updated with success!");
+            }
+            else {
+                const request = new Request({
+                    content: { storeId: store._id, searchFunction: searchFunction },
+                    user: user._id,
+                    type: RequestTypes.UpdateStoreSearchFunction
+                });
+                await request.save();
+                res.send("Request sended");
+            }
         }
-        else {
+        else
             throw { code: 404, error: "Invalid store identifier" };
-        }
+
     }
     catch (error) {
         const { code, ...errorInfo } = error;
@@ -71,17 +101,19 @@ export async function UpdateStoreSearchFunction(req, res) {
 
 export async function GetStore(req, res) {
     const { identifier } = req.params;
-    const store = await Store.findById(identifier);
-    if (store != null) {
-        res.json({
-            name: store.name,
-            url: store.url,
-            description: store.description,
-            identifier: store._id,
-            searchFunction: store.searchFunction,
-            review: store.review
-        });
+    if (Types.ObjectId.isValid(identifier)) {
+        const store = await Store.findById(identifier);
+        if (store != null) {
+            res.json({
+                name: store.name,
+                url: store.url,
+                description: store.description,
+                identifier: store._id,
+                searchFunction: store.searchFunction,
+                review: store.review
+            });
+            return;
+        }
     }
-    else
-        res.status(404).json({ message: "Invalid store identifier" });
+    res.status(404).json({ message: "Invalid store identifier" });
 }

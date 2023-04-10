@@ -13,6 +13,10 @@ const activeSearchs = [
 
 export async function Search(req, res, next) {
     let { search_query: searchQuery, page, countries } = req.query;
+    if (typeof searchQuery != "string" || searchQuery.trim() == "" || searchQuery == "null") {
+        res.status(400).send("Invalid search");
+        return;
+    }
     if (countries != null && (countries.trim() ?? "") != "")
         countries = countries.split(",");
     else
@@ -101,7 +105,7 @@ export async function Search(req, res, next) {
             searchSession.addResultsToNewPage(results);
         await searchSession.save();
 
-        console.log("Busca finalizada");
+        console.log("Search finished");
         resolve();
     });
     let activeSearchIndex = activeSearchs.length;

@@ -11,7 +11,6 @@ function searchChanged(input) {
 }
 
 
-
 async function loadCountries() {
     const countries = await fetch("/countries.json").then(res => res.json());
 
@@ -25,26 +24,27 @@ async function loadCountries() {
         .then(res => {
             const userCountry = res.dns.geo.split("-")[0].trim().toLowerCase();
             selectedCountries.push(countries.find(country => country.name.toLowerCase() == userCountry));
-            updatedCountriesFunction(countries);
+            updatedCountriesFunction(countries, countries);
         });
 
-    const updatedCountriesFunction = (countries) => {
+    const updatedCountriesFunction = (filteredCountries, totalCountries) => {
         countriesContainer.innerHTML = "";
         selectedCountriesContainer.innerHTML = "";
-        for (let country of countries) {
+        for (let country of totalCountries) {
             if (!selectedCountries.some(actualCountry => actualCountry.id == country.id)) {
-                const container = loadCountry(country, countries, selectedCountries, updatedCountriesFunction);
-                countriesContainer.appendChild(container);
-
+                if (filteredCountries.includes(country)) {
+                    const container = loadCountry(country, filteredCountries, totalCountries, selectedCountries, updatedCountriesFunction);
+                    countriesContainer.appendChild(container);
+                }
             }
             else {
-                const container = loadCountry(country, countries, selectedCountries, updatedCountriesFunction, true);
+                const container = loadCountry(country, filteredCountries, totalCountries, selectedCountries, updatedCountriesFunction, true);
                 selectedCountriesContainer.appendChild(container);
             }
         }
     };
 
-    updatedCountriesFunction(countries);
+    updatedCountriesFunction(countries, countries);
 
 
 
@@ -62,11 +62,11 @@ async function loadCountries() {
             filteredCountries = countries;
 
 
-        updatedCountriesFunction(filteredCountries);
+        updatedCountriesFunction(filteredCountries, countries);
     };
 }
 
-function loadCountry(country, countries, selectedCountries, updateCountriesFunction, checked = false) {
+function loadCountry(country, filteredCountries, totalCountries, selectedCountries, updateCountriesFunction, checked = false) {
     const lowerCase = country.name.toLowerCase();
     const container = document.createElement("div");
     container.classList.add("country-checkbox-container");
@@ -91,7 +91,7 @@ function loadCountry(country, countries, selectedCountries, updateCountriesFunct
             const index = selectedCountries.indexOf(country);
             selectedCountries.splice(index, 1);
         }
-        updateCountriesFunction(countries);
+        updateCountriesFunction(filteredCountries, totalCountries);
     });
 
     return container;
