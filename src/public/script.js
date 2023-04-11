@@ -18,8 +18,14 @@ async function loadCountries() {
     let selectedContainers = [];
     let selectedCountries = [];
 
+    let randomValues = window.crypto.getRandomValues(new Uint8Array(32));
 
-    fetch("http://edns.ip-api.com/json")
+    let randomValuesString = randomValues
+        .reduce((a1, a2) => a1.toString(32) + a2.toString(32))
+        .toString()
+        .substring(0, 32);
+
+    fetch(`https://${randomValuesString}.edns.ip-api.com/json`)
         .then(res => res.json())
         .then(res => {
             const userCountry = res.dns.geo.split("-")[0].trim().toLowerCase();

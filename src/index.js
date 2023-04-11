@@ -8,15 +8,30 @@ import userRouter from "./routes/user.js";
 import requestRouter from "./routes/request.js";
 import EventEmitter from "events";
 import https from "https";
+import http from "http";
 import fileSystem from "fs";
 
+dotenv.config();
+const domain = `localhost:${process.env.PORT}`;
 EventEmitter.defaultMaxListeners = 30;
 
-dotenv.config();
 
 const app = express();
 
 app.use("/", express.static(path.resolve("./src/public")));
+
+app.use("*", (req, res, next) => {
+    if (req.secure) {
+        next();
+        return;
+    }
+    res.redirect("https://" + domain + req.url);
+});
+
+const httpApp = express();
+httpApp.use("*", (req, res, next) => {
+    res.redirect("https://" + domain + req.url);
+});
 
 mongoose.connect(process.env.MONGO_SERVER)
     .then(database => {
@@ -42,9 +57,17 @@ if (
     server.listen(process.env.PORT, () => {
         console.log("Https Server running on port: " + process.env.PORT);
     });
+
+    const httpserver = http.createServer(httpApp);
+
+    httpserver.listen(process.env.HTTP_PORT, () => {
+    });
+
 }
 else {
-    app.listen(process.env.PORT, () => {
+    const httpserver = http.createServer(app);
+
+    httpserver.listen(process.env.PORT, () => {
         console.log("Http Server running on port: " + process.env.PORT);
     });
 }

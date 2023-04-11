@@ -1,0 +1,105 @@
+body,
+html {
+    margin: 0;
+    padding: 0;
+    background-color: black;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
+
+.form-container {
+    margin: auto;
+    text-align: center;
+    width: 80%;
+    height: 52vh;
+    background-color: #F4DC00;
+    display: flex;
+    justify-content: center;
+    align-content: space-between;
+    flex-wrap: wrap;
+    padding: 30px;
+    padding-bottom: 60px;
+    padding-top: 60px;
+    border-radius: 10px;
+}
+
+.input-container {
+    width: 100%;
+}
+
+.form-container input {
+    width: 70%;
+    font-size: clamp(15px, 2.5vh, 80px);
+    text-align: center;
+    padding: 15px;
+    padding-left: 30px;
+    padding-right: 30px;
+    outline: 0;
+    border: none;
+    margin-bottom: 1.8vh;
+    margin-top: 20px;
+    background-color: #363103;
+    color: #fff8b4;
+    border-radius: 5px;
+    font-family: 'Libre Caslon Text';
+}
+
+.form-container input::-webkit-input-placeholder {
+    color: #F4DC00;
+    font-style: italic;
+    text-transform: uppercase;
+}
+
+.form-container input:-ms-input-placeholder {
+    color: #F4DC00;
+    font-style: italic;
+    text-transform: uppercase;
+}
+
+.form-container input:-moz-placeholder {
+    color: #F4DC00;
+    font-style: italic;
+    text-transform: uppercase;
+}
+
+.form-container input::-moz-placeholder {
+    color: #F4DC00;
+    font-style: italic;
+    text-transform: uppercase;
+}
+
+.form-container input[type="button"] {
+    width: 40%;
+    text-transform: uppercase;
+    cursor: pointer;
+    margin-bottom: 5px;
+    transition-property: background-color, color;
+    transition-duration: 0.2s;
+    color: #F4DC00;
+}
+
+.form-container input[type="button"]:hover {
+    background-color: #8f820a;
+    color: #fff8b4;
+}
+
+.button-container {
+    width: 100%;
+}
+
+.button-container a {
+    font-family: "Roboto Mono";
+    font-size: 1.8vh;
+}
+
+.button-container a:visited {
+    color: black;
+}
+
+#confirm-password-field[enabled="false"] {
+    opacity: 0;
+    pointer-events: none;
+    -webkit-user-drag: none;
+}

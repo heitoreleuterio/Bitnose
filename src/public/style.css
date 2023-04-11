@@ -28,7 +28,24 @@ body[scrollable=""]::-webkit-scrollbar-thumb {
     border: 5px solid black;
 }
 
+#user-symbol {
+    position: absolute;
+    width: clamp(50px, 4vw, 150px);
+    right: 5px;
+    top: 10px;
+    fill: white;
+    opacity: 0.7;
+    cursor: pointer;
+    transition-property: fill, opacity filter;
+    transition-duration: 0.4s, 0.4s, 1s;
+    filter: drop-shadow(2px 2px 3px transparent);
+}
 
+#user-symbol:hover {
+    fill: #F4DC00;
+    opacity: 1;
+    filter: drop-shadow(2px 2px 3px #F4DC00);
+}
 
 #gadsden-snake {
     height: 98.02vh;
@@ -36,6 +53,8 @@ body[scrollable=""]::-webkit-scrollbar-thumb {
     z-index: 1;
     opacity: 0.1;
     transform: translateX(5vw);
+    user-select: none;
+    pointer-events: none;
 }
 
 #form-container {
@@ -87,10 +106,6 @@ body[scrollable=""]::-webkit-scrollbar-thumb {
 
 #svg-btc {
     height: clamp(70px, 9.7vh, 9.7vh);
-}
-
-#form-container #main-input:after {
-    content: "gamer";
 }
 
 #form-container #main-input::-webkit-input-placeholder {
