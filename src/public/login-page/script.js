@@ -28,7 +28,7 @@ function login() {
                 alert(msg);
             }
             else
-                location = "/";
+                location = "/user-panel/";
         });
 }
 
@@ -56,7 +56,7 @@ function register() {
                     alert(msg);
                 }
                 else
-                    location = "/";
+                    location = "/user-panel/";
             });
     }
     else

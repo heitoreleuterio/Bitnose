@@ -35,7 +35,7 @@ export async function AddNewStore(req, res) {
         }
         else {
             console.log(error);
-            res.status(500).send("Ocorreu um erro interno no servidor, tente novamente mais tarde");
+            res.status(500).send("Unexpected error. Try again later");
         }
     }
 }
@@ -93,7 +93,7 @@ export async function UpdateStoreSearchFunction(req, res) {
             res.status(code).send(errorInfo);
         else {
             console.log(error);
-            res.status(500).send("Ocorreu um erro interno no servidor, tente novamente mais tarde");
+            res.status(500).send("Unexpected error. Try again later");
         }
 
     }

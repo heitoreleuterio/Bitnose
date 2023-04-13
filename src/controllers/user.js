@@ -3,6 +3,8 @@ import { Request, RequestTypes } from "../models/request.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { getUserFromToken, getUsernameAndPasswordFromHeader } from "../functions/auth-functions.js";
+import { SearchResult } from "../models/search-result.js";
+import { Types } from "mongoose";
 
 export async function CreateNewUser(req, res) {
     const { email, password } = req.body;
@@ -76,6 +78,73 @@ export async function AdminRequest(req, res) {
         });
         await request.save();
         res.status(201).send("Your request was created and sended. Wait until one of our admins accept it");
+    }
+    catch (error) {
+        res.status(error.code).send(error.msg);
+    }
+}
+
+export async function RedirectToUserPanelOrRegister(req, res) {
+    try {
+        await getUserFromToken(req);
+        res.redirect("/user-panel/");
+    }
+    catch (error) {
+        res.redirect("/login-page/");
+    }
+}
+
+export async function AddProductToList(req, res) {
+    try {
+        const product = req.body;
+
+        const user = await getUserFromToken(req);
+
+        const searchResult = new SearchResult(product);
+
+        await searchResult.validate();
+
+        user.productsList.push(searchResult);
+
+        await user.save();
+
+        res.json({ productId: searchResult._id });
+
+    }
+    catch (error) {
+        if (error.name == "ValidationError")
+            res.status(400).send(error.message);
+        else if (error.code != null) {
+            res.status(error.code).send(error.msg);
+        }
+        else {
+            console.log(error);
+            res.status(500).send("Unexpected error. Try again later");
+        }
+    }
+}
+
+export async function RemoveProductFromList(req, res) {
+    try {
+        const { productId } = req.body;
+
+        if (Types.ObjectId.isValid(productId)) {
+            const user = await getUserFromToken(req);
+
+            const product = user.productsList.find(product => product._id.equals(productId));
+            if (product != null) {
+                const productIndex = user.productsList.indexOf(product);
+                user.productsList.splice(productIndex, 1);
+
+                await user.save();
+
+                res.send("The product was successfully removed");
+            }
+            else
+                throw { code: 404, msg: "There are no products with this id" }
+        }
+        else
+            throw { code: 400, msg: "Invalid product id" };
     }
     catch (error) {
         res.status(error.code).send(error.msg);

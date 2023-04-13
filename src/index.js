@@ -77,6 +77,10 @@ app.use("/search", searchRouter);
 app.use("/user", userRouter);
 app.use("/request", requestRouter);
 
+app.get("/", (req, res) => {
+    res.sendFile(path.resolve("./src/public/main/index.html"));
+});
+
 function WriteDatabaseInfo(database) {
     const nativeConnection = database.connections[0];
     console.log("\nDatabase successfully accessed");
