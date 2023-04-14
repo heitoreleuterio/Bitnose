@@ -17,8 +17,15 @@ EventEmitter.defaultMaxListeners = 30;
 
 
 const app = express();
-
 app.use("/", express.static(path.resolve("./src/public")));
+
+if (process.env.NODE_ENV == "Production") {
+    app.use("/", express.static(path.resolve("./src/public")));
+
+    app.get("/", (req, res) => {
+        res.sendFile(path.resolve("./src/public/front-react/build/index.html"));
+    });
+}
 
 app.use("*", (req, res, next) => {
     if (req.secure) {
@@ -77,9 +84,7 @@ app.use("/search", searchRouter);
 app.use("/user", userRouter);
 app.use("/request", requestRouter);
 
-app.get("/", (req, res) => {
-    res.sendFile(path.resolve("./src/public/main/index.html"));
-});
+
 
 function WriteDatabaseInfo(database) {
     const nativeConnection = database.connections[0];

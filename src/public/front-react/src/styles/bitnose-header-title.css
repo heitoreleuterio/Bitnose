@@ -67,7 +67,7 @@
     letter-spacing: 5px;
     text-decoration: none;
     position: relative;
-    display: none;
+    display: block;
     margin: 0;
     padding: 0;
     font-size: clamp(65px, 8vh, 100px);

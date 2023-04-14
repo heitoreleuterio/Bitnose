@@ -4,9 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "node --inspect src/index.js",
-    "start": "node src/index.js"
+    "start": "node src/index.js",
+    "dev-react": "npm start --prefix ./src/public/front-react"
   },
   "keywords": [],
   "author": "",

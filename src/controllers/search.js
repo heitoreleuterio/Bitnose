@@ -51,7 +51,7 @@ export async function Search(req, res, next) {
     let mainSearchPromise = new Promise(async (resolve, reject) => {
         if (searchSession != null) {
             if (page > searchSession.resultsPerPage.length + 1) {
-                res.redirect(`./content?search_query=${searchQuery}&page=${searchSession.resultsPerPage.length}`);
+                res.redirect(`./content?search_query=${searchQuery}&${countries.map(country => `countries=${country}`).reduce((acumulator, current) => acumulator + "&" + current)}&page=${searchSession.resultsPerPage.length}`);
                 next();
                 resolve();
                 return;
@@ -75,14 +75,14 @@ export async function Search(req, res, next) {
                 }
             }
             else {
-                res.json({ results });
+                res.json({ results: [].concat.apply([], results) });
                 resolve();
                 return;
             }
         }
         else {
             if (page != 1) {
-                res.redirect(`./content?search_query=${searchQuery}&page=1`);
+                res.redirect(`./content?search_query=${searchQuery}&${countries.map(country => `countries=${country}`).reduce((acumulator, current) => acumulator + "&" + current)}&page=1`);
                 next();
                 resolve();
                 return;
@@ -98,7 +98,7 @@ export async function Search(req, res, next) {
         activeSearchObject.id = searchSession._id;
         await Promise.all(promises);
         if (!res.headersSent)
-            res.json({ results });
+            res.json({ results: [].concat.apply([], results) });
 
         const resultsTotal = results.some(() => true) ? results.map(site => site.length).reduce((a1, a2) => a1 + a2, 0) : 0;
         if (resultsTotal != 0 && searchSession.resultsPerPage.length < page)
@@ -208,7 +208,7 @@ function addStoreResultToResultsAndVerifyClientResult(res, store, results, searc
             let storeIndex = results.indexOf(storeResult);
             results[storeIndex] = [...storeResult].filter(item => resultsOneArray.indexOf(item) < 20);
             if (!res.headersSent)
-                res.json({ results });
+                res.json({ results: [].concat.apply([], results) });
 
             searchSession.addResultsToNewPage(results);
             results.length = 0;

@@ -1,0 +1,253 @@
+.search-main-container {
+    background-color: black;
+    width: 100%;
+    height: 100svh;
+    overflow: auto;
+}
+
+.search-main-container::-webkit-scrollbar {
+    background-color: black;
+    width: clamp(15px, 1.2vw, 30px);
+}
+
+.search-main-container::-webkit-scrollbar-thumb {
+    background-color: #F4DC00;
+    border-radius: 10px;
+    border: 5px solid black;
+}
+
+.loading {
+    cursor: wait;
+}
+
+@keyframes LoadingSnake {
+    0% {
+        fill: #ffffff;
+    }
+
+    100% {
+        fill: #F4DC00;
+    }
+}
+
+#gadsden-snake-loading {
+    position: absolute;
+    margin: auto;
+    height: 390px;
+    left: 100px;
+    right: 0;
+    bottom: 0;
+    top: 0;
+    width: 385px;
+    cursor: wait;
+}
+
+.low-opacity {
+    opacity: 0.1;
+}
+
+.during-animation {
+    animation-name: LoadingSnake;
+    animation-duration: 1s;
+    animation-delay: 1s;
+    animation-iteration-count: infinite;
+    animation-direction: alternate;
+    animation-fill-mode: both;
+}
+
+.item-container {
+    text-align: center;
+    width: clamp(250px, 23%, 300px);
+    height: clamp(330px, 46vh, 700px);
+    padding: 12px;
+    padding-left: 5px;
+    padding-right: 5px;
+    background-color: #F4DC00;
+    border-radius: 10px;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    flex-wrap: wrap;
+}
+
+.item-image {
+    max-width: 80%;
+    max-height: 35%;
+    border-radius: 20px;
+    align-self: flex-start;
+}
+
+.buy-container {
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    gap: 10px;
+    align-self: flex-end;
+    background-color: #000000;
+    padding-left: 8px;
+    padding-right: 8px;
+    border-radius: 20px;
+    width: 90%;
+}
+
+@keyframes HeartAnimation {
+    0% {
+        fill: black;
+    }
+
+    100% {
+        fill: red;
+    }
+}
+
+.item-heart-icon {
+    fill: black;
+    position: absolute;
+    top: 0;
+    right: 5px;
+    width: 30px;
+    cursor: pointer;
+    transition-property: opacity;
+    transition-duration: 0.1s;
+    opacity: 1;
+}
+
+.item-heart-icon:hover {
+    opacity: 0.7;
+}
+
+.item-heart-icon[selected="true"] {
+    animation-name: HeartAnimation;
+    animation-duration: 0.7s;
+    animation-fill-mode: both;
+}
+
+.item-title {
+    font-family: "Roboto Mono";
+    font-weight: 400;
+    font-size: clamp(13px, 1.7vh, 25px);
+    align-self: flex-start;
+    width: 100%;
+    word-wrap: break-word;
+    max-height: clamp(100px, 41%, 400px);
+    overflow: hidden;
+}
+
+.item-title::selection {
+    background-color: transparent;
+    text-decoration: underline;
+    background-color: rgba(0, 255, 0, 0.329);
+}
+
+#not-find-message {
+    font-family: 'Libre Caslon Text';
+    color: #F4DC00;
+    text-align: center;
+    font-size: 50px;
+    position: relative;
+    top: 50px;
+    display: block;
+}
+
+.item-price {
+    font-family: "Roboto Mono";
+    font-size: clamp(16px, 2vh, 33px);
+    text-decoration: underline;
+    color: white;
+}
+
+.item-button {
+    font-size: clamp(13px, 1.6vh, 28px);
+    padding: clamp(10px, 5.2%, 18px);
+    padding-left: clamp(13.5px, 8%, 60px);
+    padding-right: clamp(13.5px, 8%, 60px);
+    border-radius: 10px;
+    background-color: white;
+    color: black;
+    font-family: "Roboto Mono";
+    font-weight: 800;
+    cursor: pointer;
+    white-space: pre;
+    text-decoration: none;
+    transition-property: background-color, color, outline-color;
+    outline-width: 2px;
+    outline-style: solid;
+    outline-color: black;
+    transition-duration: 0.3s;
+}
+
+.item-button:hover {
+    background-color: black;
+    outline-color: white;
+    color: white;
+}
+
+.item-button:hover:visited {
+    color: white;
+}
+
+.item-button:visited {
+    color: black;
+}
+
+.itens-container {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 20px;
+    width: clamp(600px, 80%, 4000px);
+    margin: auto;
+    margin-bottom: 30px;
+}
+
+
+
+#page-control-container {
+    text-align: center;
+    display: block;
+}
+
+.page-control-button {
+    background-color: #F4DC00;
+    border: none;
+    outline: none;
+    border-radius: 10px;
+    padding: 0px;
+    box-sizing: border-box;
+    width: 70px;
+    height: 60px;
+    margin: 5px;
+    cursor: pointer;
+    transition-property: opacity;
+    transition-duration: 0.4s;
+}
+
+.page-control-button:hover {
+    opacity: 0.8;
+}
+
+#current-page-title,
+#current-search-title {
+    color: white;
+    position: relative;
+    font-size: clamp(20px, 3vh, 40px);
+    margin: 0;
+    font-family: "Roboto Mono";
+    display: block;
+}
+
+#current-page-title {
+    float: right;
+    right: 2vw;
+}
+
+#current-search-title {
+    float: left;
+    left: 2vw;
+}
+
+#current-page-info-container {
+    position: relative;
+    bottom: 50px;
+}
